@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Assert that the hostname is set
+    assert:
+      that: ansible_hostname is match('instance.*')
+
+  - name: Assert existing binary
+    stat:
+      path: /usr/local/bin/rclone
+    register: rclone_path
+
+  - name: Assert that the file is in the expected state
+    assert:
+      that:
+        - rclone_path.stat.isreg
+        - rclone_path.stat.pw_name == 'root'
+        - rclone_path.stat.gr_name == 'root'
+        - rclone_path.stat.mode == "0755"
