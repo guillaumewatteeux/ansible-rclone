@@ -1,0 +1,18 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+
+  - name: Assert existing binary
+    stat:
+      path: /usr/local/bin/rclone
+      #path: "{{ rclone_path }}"
+    register: rclone_verify_path
+
+  - name: Assert that the file is in the expected state
+    assert:
+      that:
+        - rclone_verify_path.stat.isreg
+        - rclone_verify_path.stat.pw_name == 'root'
+        - rclone_verify_path.stat.gr_name == 'root'
+        - rclone_verify_path.stat.mode == "0755"
